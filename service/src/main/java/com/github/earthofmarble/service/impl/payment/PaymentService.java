@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
  * Created by earthofmarble on Oct, 2019
  */
 @Service
+@Transactional
 public class PaymentService extends AbstractService<Payment, Integer> implements IPaymentService {
 
     private IPaymentDao paymentDao;
@@ -30,11 +31,11 @@ public class PaymentService extends AbstractService<Payment, Integer> implements
         this.paymentDao = paymentDao;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void createPayment(Account senderAccount, Account receiverAccount, Double sum){
-        Currency senderCurrency = senderAccount.getCurrency();
-        Timestamp currentTime = Timestamp.valueOf(LocalDateTime.now());
-        paymentDao.create(new Payment(senderAccount, receiverAccount, sum, senderCurrency, currentTime));
-    }
+//    public void createPayment(Account senderAccount, Account receiverAccount, Double sum){
+//        Currency senderCurrency = senderAccount.getCurrency();
+//        Timestamp currentTime = Timestamp.valueOf(LocalDateTime.now());
+//        Payment payment = new Payment(senderAccount, receiverAccount, sum, senderCurrency, currentTime);
+//        paymentDao.create(payment);
+//    }
 
 }

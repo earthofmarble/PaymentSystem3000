@@ -7,6 +7,8 @@ import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
 
+import java.util.Objects;
+
 /**
  * Created by earthofmarble on Oct, 2019
  */

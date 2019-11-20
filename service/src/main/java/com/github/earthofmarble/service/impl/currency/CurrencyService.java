@@ -1,8 +1,6 @@
 package com.github.earthofmarble.service.impl.currency;
 
-import com.github.earthofmarble.dal.api.IGenericDao;
 import com.github.earthofmarble.dal.api.currency.ICurrencyDao;
-import com.github.earthofmarble.dal.api.user.IUserCredsDao;
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
 import com.github.earthofmarble.model.model.currency.Currency;

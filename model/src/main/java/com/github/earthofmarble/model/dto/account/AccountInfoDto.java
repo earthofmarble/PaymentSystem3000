@@ -10,6 +10,7 @@ import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -18,8 +19,8 @@ import java.util.List;
 public class AccountInfoDto implements IDto {
 
     private Integer id;
-    @ReferencedField(type = PropertyType.COMPOSITE)
-    private UserInfoDto owner;
+//    @ReferencedField(type = PropertyType.COMPOSITE)
+//    private UserInfoDto owner;
     private String name;
     @ReferencedField(type = PropertyType.COMPOSITE)
     private CurrencyDto currency;
@@ -38,13 +39,13 @@ public class AccountInfoDto implements IDto {
         this.id = id;
     }
 
-    public UserInfoDto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(UserInfoDto owner) {
-        this.owner = owner;
-    }
+//    public UserInfoDto getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(UserInfoDto owner) {
+//        this.owner = owner;
+//    }
 
     public String getName() {
         return name;

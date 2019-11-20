@@ -11,6 +11,7 @@ import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +26,7 @@ import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -147,6 +149,19 @@ public class Account implements IModel {
 
     public void setReceivedPayments(List<Payment> receivedPayments) {
         this.receivedPayments = receivedPayments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return getId().equals(account.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
 

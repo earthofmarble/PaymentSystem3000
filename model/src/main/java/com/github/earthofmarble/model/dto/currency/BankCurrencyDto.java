@@ -5,6 +5,7 @@ import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Nov, 2019

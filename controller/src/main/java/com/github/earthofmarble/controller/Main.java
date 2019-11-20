@@ -1,6 +1,6 @@
 package com.github.earthofmarble.controller;
 
-import com.github.earthofmarble.configuration.AppConfiguration;
+//import com.github.earthofmarble.configuration.AppConfiguration;
 import com.github.earthofmarble.model.dto.account.AccountExtendedDto;
 import com.github.earthofmarble.model.dto.account.AccountInfoDto;
 import com.github.earthofmarble.model.model.account.Account;
@@ -18,21 +18,21 @@ import org.springframework.context.support.AbstractApplicationContext;
 public class Main {
 
     public static void main(String[] args) {
-
-        AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfiguration.class);
 //
-//        IUserService userService = context.getBean(IUserService.class);
-        IAccountService accountService = context.getBean(IAccountService.class);
-//        IPaymentService paymentService = context.getBean(IPaymentService.class);
-//        Mapper mapper = context.getBean(Mapper.class);
+//        AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfiguration.class);
+////
+////        IUserService userService = context.getBean(IUserService.class);
+//        IAccountService accountService = context.getBean(IAccountService.class);
+////        IPaymentService paymentService = context.getBean(IPaymentService.class);
+////        Mapper mapper = context.getBean(Mapper.class);
+////
+////        AccountExtendedDto accountDto = (AccountExtendedDto) accountService.readById(1, AccountExtendedDto.class);
+////        AccountExtendedDto accountDto2 = (AccountExtendedDto) accountService.readById(2, AccountExtendedDto.class);
+////        paymentService.createPayment((Account) mapper.convert(accountDto, Account.class, null), (Account) mapper.convert(accountDto2, Account.class, null), 10.0);
+////
 //
-//        AccountExtendedDto accountDto = (AccountExtendedDto) accountService.readById(1, AccountExtendedDto.class);
-//        AccountExtendedDto accountDto2 = (AccountExtendedDto) accountService.readById(2, AccountExtendedDto.class);
-//        paymentService.createPayment((Account) mapper.convert(accountDto, Account.class, null), (Account) mapper.convert(accountDto2, Account.class, null), 10.0);
 //
-
-
-        accountService.orderMoney("1112", "1111", 10.0);
+//        accountService.orderMoney("1112", "1111", 10.0);
 
 //        UserFilter uf = new UserFilter();
 //        uf.setFirstName("");

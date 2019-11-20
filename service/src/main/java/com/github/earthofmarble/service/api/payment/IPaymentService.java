@@ -10,6 +10,6 @@ import com.github.earthofmarble.service.api.IGenericService;
 
 public interface IPaymentService extends IGenericService<Payment, Integer> {
 
-    void createPayment(Account senderAccount, Account receiverAccount, Double sum);
+//    void createPayment(Account senderAccount, Account receiverAccount, Double sum);
 
 }

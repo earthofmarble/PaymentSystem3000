@@ -3,11 +3,13 @@ package com.github.earthofmarble.model.dto.payment;
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.model.dto.account.AccountExtendedDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
+import com.github.earthofmarble.model.model.payment.Operation;
 import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -24,8 +26,19 @@ public class PaymentDto implements IDto {
     @ReferencedField(type = PropertyType.COMPOSITE)
     private CurrencyDto currency;
     private Timestamp date;
+    private Operation operation;
 
     public PaymentDto() {
+    }
+
+    public PaymentDto(AccountExtendedDto sender, AccountExtendedDto receiver, Double amount,
+                      CurrencyDto currency, Timestamp date, Operation operation) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.amount = amount;
+        this.currency = currency;
+        this.date = date;
+        this.operation = operation;
     }
 
     public Integer getId() {
@@ -74,5 +87,13 @@ public class PaymentDto implements IDto {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
     }
 }

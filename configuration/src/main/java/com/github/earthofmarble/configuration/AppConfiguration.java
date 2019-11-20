@@ -16,14 +16,17 @@ import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 
 @Configuration
+@EnableWebMvc
 @EnableTransactionManagement
-@ComponentScan({ "com.github.earthofmarble.configuration", "com.github.earthofmarble.dal.**", "com.github.earthofmarble.service.**" })
+@ComponentScan({ "com.github.earthofmarble.configuration", "com.github.earthofmarble.controller.**", "com.github.earthofmarble.dal.**", "com.github.earthofmarble.service.**" })
 @PropertySource(value = { "classpath:application.properties" })
-public class AppConfiguration {
+public class AppConfiguration implements WebMvcConfigurer {
  
     private final Environment environment;
 

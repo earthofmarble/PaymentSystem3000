@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -26,7 +27,7 @@ public class UserCreds implements IModel {
     private String username;
     @Column(name = "password")
     private String password;
-    @OneToOne(mappedBy = "userCreds", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "userCreds", fetch = FetchType.LAZY)
     private User user;
 
     public UserCreds() {
@@ -62,5 +63,18 @@ public class UserCreds implements IModel {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserCreds)) return false;
+        UserCreds userCreds = (UserCreds) o;
+        return getId().equals(userCreds.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

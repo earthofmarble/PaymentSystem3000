@@ -54,7 +54,7 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
 
             if (defaultGraphs.value().length==0){
                 throw new DefaultGraphException("The [@DefaultGraphs] annotation's value is empty! " +
-                        "                        There should be at least one [@DefaultGraph] nested parameter");
+                                                "There should be at least one [@DefaultGraph] nested parameter");
             }
 
             for (DefaultGraph graph: defaultGraphs.value()){
@@ -111,8 +111,8 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
                      .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
                      .orderBy(orderList);
         return entityManager.createQuery(criteriaQuery)
-                .setHint("javax.persistence."+getFetchType(clazz, function), entityGraph)
-                .getResultList();
+                            .setHint("javax.persistence."+getFetchType(clazz, function), entityGraph)
+                            .getResultList();
     }
 
     public List<T> readByPk(PK primaryKey){
@@ -124,7 +124,7 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
         predicates.add(criteriaBuilder.equal(root.get(getIdFieldName(clazz)), primaryKey));
 
         return buildSelectQuery(clazz, criteriaQuery, criteriaBuilder, root, Function.READ_SINGLE,
-                          predicates, fillOrderList(criteriaBuilder, root));
+                                predicates, fillOrderList(criteriaBuilder, root));
     }
 
     public List<T> readWithFilter(AbstractFilter filter){
@@ -134,7 +134,7 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
         Root<T> root = criteriaQuery.from(clazz);
 
         return buildSelectQuery(clazz, criteriaQuery, criteriaBuilder, root, Function.READ_BATCH,
-                          fillPredicates(filter, criteriaBuilder, root), fillOrderList(criteriaBuilder, root));
+                                fillPredicates(filter, criteriaBuilder, root), fillOrderList(criteriaBuilder, root));
     }
 
     public void create(T model){

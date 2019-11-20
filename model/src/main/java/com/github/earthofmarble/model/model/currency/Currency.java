@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -98,15 +99,15 @@ public class Currency implements IModel {
     }
 
     @Override
-    public String toString() {
-        return "Currency{" +
-                "id=" + id +
-                ", abbreviation='" + abbreviation + '\'' +
-                ", name='" + name + '\'' +
-                ", scale=" + scale +
-                ", rate=" + rate +
-                ", accounts=" + accounts +
-                ", payments=" + payments +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Currency)) return false;
+        Currency currency = (Currency) o;
+        return getId().equals(currency.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

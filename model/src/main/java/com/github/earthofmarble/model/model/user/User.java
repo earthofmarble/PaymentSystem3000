@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -52,11 +53,11 @@ public class User implements IModel {
     private UserRole role;
     @Column(name = "email")
     private String email;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ReferencedField(type = PropertyType.COMPOSITE)
     private UserCreds userCreds;
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private List<Account> accounts;
 
     public User() {
@@ -112,7 +113,7 @@ public class User implements IModel {
 
     public List<Account> getAccounts() {
         if (accounts==null){
-            return new ArrayList<Account>();
+            return new ArrayList<>();
         }
         return accounts;
     }
@@ -121,17 +122,16 @@ public class User implements IModel {
         this.accounts = accounts;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return getId().equals(user.getId());
+    }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", role=" + role +
-                ", email='" + email + '\'' +
-                ", userCreds=" + userCreds +
-                ", accounts=" + accounts +
-                '}';
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

@@ -1,5 +1,6 @@
 package com.github.earthofmarble.service.api.user;
 
+import com.github.earthofmarble.model.dto.user.user.UserProfileDto;
 import com.github.earthofmarble.model.model.user.UserCreds;
 import com.github.earthofmarble.service.api.IGenericService;
 
@@ -8,4 +9,8 @@ import com.github.earthofmarble.service.api.IGenericService;
  */
 
 public interface IUserCredsService extends IGenericService<UserCreds, Integer> {
+
+    boolean tryLogin(String login);
+    UserProfileDto getUserByLogin(String login);
+
 }

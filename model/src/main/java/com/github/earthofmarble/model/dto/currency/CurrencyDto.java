@@ -3,6 +3,8 @@ package com.github.earthofmarble.model.dto.currency;
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 
+import java.util.Objects;
+
 /**
  * Created by earthofmarble on Oct, 2019
  */
@@ -59,14 +61,4 @@ public class CurrencyDto implements IDto {
         this.abbreviation = abbreviation;
     }
 
-    @Override
-    public String toString() {
-        return "CurrencyDto{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", scale=" + scale +
-                ", rate=" + rate +
-                ", abbreviation='" + abbreviation + '\'' +
-                '}';
-    }
 }

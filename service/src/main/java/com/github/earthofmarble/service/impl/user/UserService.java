@@ -7,6 +7,7 @@ import com.github.earthofmarble.model.dto.user.user.UserInfoDto;
 import com.github.earthofmarble.model.dto.user.user.UserProfileDto;
 import com.github.earthofmarble.model.model.user.User;
 import com.github.earthofmarble.model.model.user.UserCreds;
+import com.github.earthofmarble.service.api.user.IUserCredsService;
 import com.github.earthofmarble.service.api.user.IUserService;
 import com.github.earthofmarble.service.impl.AbstractService;
 import com.github.earthofmarble.utility.exception.InvalidRecordAmountReturnedException;
@@ -25,28 +26,21 @@ public class UserService extends AbstractService<User, Integer> implements IUser
 
     private IUserDao userDao;
     private IUserCredsDao userCredsDao;
+    private IUserCredsService userCredsService;
 
     @Autowired
-    private UserService(IUserDao userDao, IUserCredsDao userCredsDao){
+    private UserService(IUserDao userDao, IUserCredsDao userCredsDao, IUserCredsService userCredsService){
         super(userDao);
         this.userDao = userDao;
         this.userCredsDao = userCredsDao;
-    }
-
-    private boolean tryLogin(String login){
-        List<UserCreds> credsList = userCredsDao.getByLogin(login);
-        if (credsList.size()>1){
-            throw new InvalidRecordAmountReturnedException(credsList.size() + " [" + UserCreds.class.getSimpleName() +
-                    "] records returned from database, but expected 1.");
-        }
-        return credsList.isEmpty();
+        this.userCredsService = userCredsService;
     }
 
     @Override
     public boolean create(IDto dto) {
         tryCastPossibilities(dto, UserProfileDto.class);
         UserProfileDto userDto = (UserProfileDto) dto;
-        if (!tryLogin(userDto.getUserCreds().getUsername())){
+        if (!userCredsService.tryLogin(userDto.getUserCreds().getUsername())){
             return false;
         }
         UserCreds userCreds = (UserCreds) mapper.convert(userDto.getUserCreds(), UserCreds.class, null);

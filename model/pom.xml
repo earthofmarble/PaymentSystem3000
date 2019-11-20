@@ -31,7 +31,6 @@
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind TODO это убрать, джексон должен бытьь в спринге -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

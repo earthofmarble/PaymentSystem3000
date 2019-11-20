@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -44,17 +45,20 @@ public class Payment implements IModel {
     private Currency currency;
     @Column
     private Timestamp date;
+    @Column
+    private Operation operation;
 
     public Payment() {
     }
 
-    public Payment(Account sender, Account receiver, Double amount, Currency currency, Timestamp date) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.amount = amount;
-        this.currency = currency;
-        this.date = date;
-    }
+//    public Payment(Account sender, Account receiver, Double amount, Currency currency, Timestamp date, Operation operation) {
+//        this.sender = sender;
+//        this.receiver = receiver;
+//        this.amount = amount;
+//        this.currency = currency;
+//        this.date = date;
+//        this.operation = operation;
+//    }
 
     public Integer getId() {
         return id;
@@ -102,5 +106,26 @@ public class Payment implements IModel {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Payment)) return false;
+        Payment payment = (Payment) o;
+        return getId().equals(payment.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
