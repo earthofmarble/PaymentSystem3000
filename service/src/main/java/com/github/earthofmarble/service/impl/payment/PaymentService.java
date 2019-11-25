@@ -2,6 +2,7 @@ package com.github.earthofmarble.service.impl.payment;
 
 import com.github.earthofmarble.dal.api.payment.IPaymentDao;
 import com.github.earthofmarble.dal.api.user.IUserCredsDao;
+import com.github.earthofmarble.model.dto.payment.PaymentDto;
 import com.github.earthofmarble.model.model.account.Account;
 import com.github.earthofmarble.model.model.currency.Currency;
 import com.github.earthofmarble.model.model.payment.Payment;
@@ -31,11 +32,11 @@ public class PaymentService extends AbstractService<Payment, Integer> implements
         this.paymentDao = paymentDao;
     }
 
-//    public void createPayment(Account senderAccount, Account receiverAccount, Double sum){
-//        Currency senderCurrency = senderAccount.getCurrency();
-//        Timestamp currentTime = Timestamp.valueOf(LocalDateTime.now());
-//        Payment payment = new Payment(senderAccount, receiverAccount, sum, senderCurrency, currentTime);
-//        paymentDao.create(payment);
-//    }
+    public PaymentDto create(PaymentDto paymentDto){
+      Payment payment = (Payment) mapper.convert(paymentDto, Payment.class, null);
+      paymentDao.create(payment);
+      paymentDto.setId(payment.getId());
+      return paymentDto;
+    }
 
 }

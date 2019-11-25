@@ -34,11 +34,11 @@ public class Main {
 //
 //        accountService.orderMoney("1112", "1111", 10.0);
 
-//        UserFilter uf = new UserFilter();
+//        AccountFilter uf = new AccountFilter();
 //        uf.setFirstName("");
 //        uf.setFirstElement(0);
 //        uf.setPageSize(1);
-//        System.err.println(userService.readWithFilter(uf, UserInfoDto.class));
+//        System.err.println(userService.readAll(uf, UserInfoDto.class));
 //
 //        UserProfileDto userProfileDto = new UserProfileDto();
 //        UserCredsDto userCredsDto = new UserCredsDto();

@@ -29,7 +29,7 @@ public class UserCredsDao extends AbstractDao<UserCreds, Integer> implements IUs
         predicates.add(criteriaBuilder.equal(root.get(UserCreds_.USERNAME), username));
 
         return buildSelectQuery(UserCreds.class, criteriaQuery, criteriaBuilder, root, Function.NONE,
-                predicates, fillOrderList(criteriaBuilder, root));
+                predicates, fillOrderList(criteriaBuilder, root), null);
     }
 
 }

@@ -2,15 +2,13 @@ package com.github.earthofmarble.service.impl;
 
 import com.github.earthofmarble.dal.api.IGenericDao;
 import com.github.earthofmarble.model.dto.IDto;
-import com.github.earthofmarble.model.filter.AbstractFilter;
+import com.github.earthofmarble.model.filter.IFilter;
 import com.github.earthofmarble.service.api.IGenericService;
 import com.github.earthofmarble.utility.exception.ClassConstructorException;
 import com.github.earthofmarble.utility.exception.InvalidRecordAmountReturnedException;
-import com.github.earthofmarble.utility.exception.InvocationException;
 import com.github.earthofmarble.utility.exception.NoDbRecordException;
 import com.github.earthofmarble.utility.mapper.exception.WrongReferencedTypeException;
 import com.github.earthofmarble.utility.mapper.service.Mapper;
-import com.sun.xml.bind.v2.model.core.ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,9 +84,9 @@ public abstract class AbstractService<T, PK extends Serializable> implements IGe
         }
     }
 
-    public List<IDto> readWithFilter(AbstractFilter filter, Class dtoClazz) {
-        List<T> models = genericDao.readWithFilter(filter);
-        return convertListToDto(models, dtoClazz);
+    public List<IDto> readWithFilter(IFilter filter, Class convertToDtoClazz) {
+        List<T> models = genericDao.readAll(filter);
+        return convertListToDto(models, convertToDtoClazz);
     }
 
     public IDto readById(PK primaryKey, Class dtoClazz) {
@@ -102,15 +100,17 @@ public abstract class AbstractService<T, PK extends Serializable> implements IGe
         return true;
     }
 
-    public void update(IDto dto) {
+    public boolean update(IDto dto) {
         List<T> models = genericDao.readByPk(dto.getId());
         checkSingleListSize(models);
         genericDao.merge(mapper.convert(dto, getEntityType(), models.get(0)));
+        return true;
     }
 
-    public void delete(IDto dto) {
+    public boolean delete(IDto dto) {
         List<T> models = genericDao.readByPk(dto.getId());
         checkSingleListSize(models);
         genericDao.delete(models.get(0));
+        return true;
     }
 }

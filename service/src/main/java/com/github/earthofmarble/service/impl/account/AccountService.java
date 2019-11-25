@@ -6,6 +6,7 @@ import com.github.earthofmarble.model.dto.account.AccountExtendedDto;
 import com.github.earthofmarble.model.dto.account.AccountInfoDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
 import com.github.earthofmarble.model.dto.payment.PaymentDto;
+import com.github.earthofmarble.model.filter.IFilter;
 import com.github.earthofmarble.model.model.account.Account;
 import com.github.earthofmarble.model.model.currency.Currency;
 import com.github.earthofmarble.model.model.payment.Operation;
@@ -59,13 +60,13 @@ public class AccountService extends AbstractService<Account, Integer> implements
     private PaymentDto createPaymentDto(Account senderAccount, Account receiverAccount, Double sum,
                                         Currency currency, Operation operation){
         Timestamp currentTime = Timestamp.valueOf(LocalDateTime.now());
-        AccountExtendedDto senderDto = null;
-        AccountExtendedDto receiverDto = null;
+        AccountInfoDto senderDto = null;
+        AccountInfoDto receiverDto = null;
         if (senderAccount!=null){
-            senderDto = (AccountExtendedDto) mapper.convert(senderAccount, AccountExtendedDto.class, null);
+            senderDto = (AccountInfoDto) mapper.convert(senderAccount, AccountInfoDto.class, null);
         }
         if (receiverAccount!=null){
-            receiverDto = (AccountExtendedDto) mapper.convert(receiverAccount, AccountExtendedDto.class, null);
+            receiverDto = (AccountInfoDto) mapper.convert(receiverAccount, AccountInfoDto.class, null);
         }
         CurrencyDto currencyDto = (CurrencyDto) mapper.convert(currency, CurrencyDto.class, null);
         return new PaymentDto(senderDto, receiverDto, sum, currencyDto, currentTime, operation);
@@ -96,56 +97,9 @@ public class AccountService extends AbstractService<Account, Integer> implements
     }
 
     /**
-     *  This method is used in actual replenish operations, so:
-     *  @param senderCurrencyDto is a currencyDTO parameter (unlike addMoney()) to be able to call this method from a controller.
-     *                          "senderCurrency" means the currency of the place where the payment is made
-     *  @return returns payment object to create in controller
-     */
-    public PaymentDto fundAccount(String accountNumber, Double sum, CurrencyDto senderCurrencyDto) {
-        Currency currency = (Currency) mapper.convert(senderCurrencyDto, Currency.class, null);
-        Account account = addMoney(accountNumber, sum, currency);
-        return createPaymentDto(null, account, sum, account.getCurrency(), Operation.REPLENISHMENT);
-    }
-
-    /**
-     *  This method is used in actual withdraw operations, so:
-     *  @param accountDto is an account to withdraw from
-     *  @param sum unconverted sum
-     *  @return returns payment object to create in controller
-     */
-    public PaymentDto withdrawMoney(AccountInfoDto accountDto, Double sum) {
-       Account account = subtractMoney(accountDto.getNumber(), sum);
-       return createPaymentDto(account, null, sum, account.getCurrency(), Operation.WITHDRAWAL);
-    }
-
-    /**
-     *  A transfer operation between two accounts
-     *  @param sum unconverted sum
-     *  @return returns payment object to create in controller
-     */
-    public PaymentDto orderMoney(String senderAccountNumber, String receiverAccountNumber, Double sum) {
-        Account senderAccount = subtractMoney(senderAccountNumber, sum);
-        Account receiverAccount = addMoney(receiverAccountNumber, sum, senderAccount.getCurrency());
-        return createPaymentDto(senderAccount, receiverAccount, sum, senderAccount.getCurrency(), Operation.TRANSFER);
-//        paymentService.createPayment(senderAccount, receiverAccount, sum); //TODO теперь будет две транзакции, одна переводит деньги, другая - выдает чек (в контроллере)
-    }
-
-    /**
-     *  Reverse of the account's lockout status.
-     *  @param lock true/false to set account locked/unlocked
-     *  @return true if no errors occurred
-     */
-    public boolean changeLockoutState(String accountNumber, Boolean lock) {
-        Account account = getAccountUsingNumber(accountNumber);
-        account.setLocked(lock);
-        accountDao.merge(account);
-        return true;
-    }
-
-    /**
      * Simple [readById] operation, but instead of filtering by id, accounts are filtered by account number:
      * @param accountNumber -
-     * @return list of dto's (account's)
+     * @return list of dtos (accounts)
      */
     private Account getAccountUsingNumber(String accountNumber) {
         List<Account> accounts = accountDao.readByAccountNumber(accountNumber);
@@ -153,14 +107,36 @@ public class AccountService extends AbstractService<Account, Integer> implements
         return accounts.get(0);
     }
 
-    /**
-     * Simple [readAll] operation, the only difference is in:
-     * @param userId - clause to filter accounts
-     * @return list of dto's (account's)
-     */
-    public List<IDto> getUserAccounts(Integer userId, Class toDtoClazz) {
-        List<Account> accounts = accountDao.getUserAccounts(userId);
-        return convertListToDto(accounts, toDtoClazz);
+
+    public PaymentDto fundAccount(String accountNumber, Double sum, CurrencyDto senderCurrencyDto) {
+        Currency currency = (Currency) mapper.convert(senderCurrencyDto, Currency.class, null);
+        Account account = addMoney(accountNumber, sum, currency);
+        return createPaymentDto(null, account, sum, account.getCurrency(), Operation.REPLENISHMENT);
+    }
+
+    public PaymentDto withdrawMoney(AccountInfoDto accountDto, Double sum) {
+       Account account = subtractMoney(accountDto.getNumber(), sum);
+       return createPaymentDto(account, null, sum, account.getCurrency(), Operation.WITHDRAWAL);
+    }
+
+    public PaymentDto orderMoney(String senderAccountNumber, String receiverAccountNumber, Double sum) {
+        Account senderAccount = subtractMoney(senderAccountNumber, sum);
+        Account receiverAccount = addMoney(receiverAccountNumber, sum, senderAccount.getCurrency());
+        return createPaymentDto(senderAccount, receiverAccount, sum, senderAccount.getCurrency(), Operation.TRANSFER);
+//        paymentService.createPayment(senderAccount, receiverAccount, sum); //TODO теперь будет две транзакции, одна переводит деньги, другая - выдает чек (в контроллере)
+    }
+
+    public boolean changeLockoutState(String accountNumber, Boolean lock) {
+        Account account = getAccountUsingNumber(accountNumber);
+        account.setLocked(lock);
+        accountDao.merge(account);
+        return true;
+    }
+
+    @Override
+    public List<IDto> readWithFilter(IFilter filter, Class convertToDtoClazz) {
+        List<Account> accounts = accountDao.readAll(filter);
+        return convertListToDto(accounts, convertToDtoClazz);
     }
 
     @Override

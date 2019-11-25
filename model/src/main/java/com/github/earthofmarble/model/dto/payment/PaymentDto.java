@@ -2,6 +2,7 @@ package com.github.earthofmarble.model.dto.payment;
 
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.model.dto.account.AccountExtendedDto;
+import com.github.earthofmarble.model.dto.account.AccountInfoDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
 import com.github.earthofmarble.model.model.payment.Operation;
 import com.github.earthofmarble.utility.mapper.annotation.Convertible;
@@ -19,9 +20,9 @@ public class PaymentDto implements IDto {
 
     private Integer id;
     @ReferencedField(type = PropertyType.COMPOSITE)
-    private AccountExtendedDto sender;
+    private AccountInfoDto sender;
     @ReferencedField(type = PropertyType.COMPOSITE)
-    private AccountExtendedDto receiver;
+    private AccountInfoDto receiver;
     private Double amount;
     @ReferencedField(type = PropertyType.COMPOSITE)
     private CurrencyDto currency;
@@ -31,7 +32,7 @@ public class PaymentDto implements IDto {
     public PaymentDto() {
     }
 
-    public PaymentDto(AccountExtendedDto sender, AccountExtendedDto receiver, Double amount,
+    public PaymentDto(AccountInfoDto sender, AccountInfoDto receiver, Double amount,
                       CurrencyDto currency, Timestamp date, Operation operation) {
         this.sender = sender;
         this.receiver = receiver;
@@ -49,19 +50,19 @@ public class PaymentDto implements IDto {
         this.id = id;
     }
 
-    public AccountExtendedDto getSender() {
+    public AccountInfoDto getSender() {
         return sender;
     }
 
-    public void setSender(AccountExtendedDto sender) {
+    public void setSender(AccountInfoDto sender) {
         this.sender = sender;
     }
 
-    public AccountExtendedDto getReceiver() {
+    public AccountInfoDto getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(AccountExtendedDto receiver) {
+    public void setReceiver(AccountInfoDto receiver) {
         this.receiver = receiver;
     }
 

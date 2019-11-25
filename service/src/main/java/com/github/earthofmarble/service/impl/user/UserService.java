@@ -54,19 +54,21 @@ public class UserService extends AbstractService<User, Integer> implements IUser
     }
 
     @Override
-    public void update(IDto dto) {
+    public boolean update(IDto dto) {
         tryCastPossibilities(dto, UserProfileDto.class);
         UserProfileDto userDto = (UserProfileDto) dto;
         List<User> users = userDao.readByPk(userDto.getId());
         checkSingleListSize(users);
         userDao.merge((User) mapper.convert(userDto, User.class, users.get(0)));
+        return true;
     }
 
     @Override
-    public void delete(IDto dto) {
+    public boolean delete(IDto dto) {
         tryCastPossibilities(dto, UserInfoDto.class);
         List<UserCreds> credsList = userCredsDao.readByPk(dto.getId());
         checkSingleListSize(credsList);
         userCredsDao.delete(credsList.get(0));
+        return true;
     }
 }

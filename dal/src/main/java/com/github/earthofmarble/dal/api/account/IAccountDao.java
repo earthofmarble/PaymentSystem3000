@@ -12,7 +12,6 @@ import java.util.List;
 public interface IAccountDao extends IGenericDao<Account, Integer> {
 
     List<Account> readByAccountNumber(String accountNumber);
-    List<Account> getUserAccounts(Integer userId);
     void withdrawMoney(Integer accountId, Double amount);
     void addMoney(Integer accountId, Double amount);
 

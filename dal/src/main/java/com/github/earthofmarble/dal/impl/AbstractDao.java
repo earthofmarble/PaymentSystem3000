@@ -1,7 +1,7 @@
 package com.github.earthofmarble.dal.impl;
 
 import com.github.earthofmarble.dal.api.IGenericDao;
-import com.github.earthofmarble.model.filter.AbstractFilter;
+import com.github.earthofmarble.model.filter.IFilter;
 import com.github.earthofmarble.utility.defaultgraph.DefaultGraph;
 import com.github.earthofmarble.utility.defaultgraph.DefaultGraphs;
 import com.github.earthofmarble.utility.defaultgraph.Function;
@@ -15,6 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -100,18 +101,37 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
         return new ArrayList<>();
     }
 
-    protected List<Predicate> fillPredicates(AbstractFilter filter, CriteriaBuilder criteriaBuilder, Root root) {
+    /**
+     * Used in situations like {@link #readAll(IFilter filter) readAll} method,
+     * if readAll called on class, which doesn't override this method, it returns empty list.
+     */
+    protected List<Predicate> fillPredicates(CriteriaBuilder criteriaBuilder, From rootOrJoin, IFilter filter) {
         return new ArrayList<>();
     }
 
-    protected List<T> buildSelectQuery(Class clazz, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder,
-                                       Root root, Function function, List<Predicate> predicates, List<Order> orderList){
+    /**
+     * Method, created to prevent code duplicating
+     * @param clazz entity to work with
+     * @param predicates list of predicates
+     * @param orderList list of orders
+     * @param filter - filter, can be null. if null first result if set to 0 and page size is set to 5
+     */
+    protected List<T> buildSelectQuery(Class clazz, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder, Root root,
+                                       Function function, List<Predicate> predicates, List<Order> orderList, IFilter filter){
+        Integer firstResult = 0;
+        Integer pageSize = 5;
+        if (filter!=null){
+            firstResult = filter.getFirstElement();
+            pageSize = filter.getPageSize();
+        }
         EntityGraph entityGraph = createEntityGraph(clazz, function);
         criteriaQuery.select(root)
                      .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
                      .orderBy(orderList);
         return entityManager.createQuery(criteriaQuery)
                             .setHint("javax.persistence."+getFetchType(clazz, function), entityGraph)
+                            .setFirstResult(firstResult)
+                            .setMaxResults(pageSize)
                             .getResultList();
     }
 
@@ -124,17 +144,21 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
         predicates.add(criteriaBuilder.equal(root.get(getIdFieldName(clazz)), primaryKey));
 
         return buildSelectQuery(clazz, criteriaQuery, criteriaBuilder, root, Function.READ_SINGLE,
-                                predicates, fillOrderList(criteriaBuilder, root));
+                                predicates, fillOrderList(criteriaBuilder, root), null);
     }
 
-    public List<T> readWithFilter(AbstractFilter filter){
+    /**
+     * @param filter should contain at least [firstElement] and [pageSize] fields
+     * @return returns list of filtered database records
+     */
+    public List<T> readAll(IFilter filter){
         Class clazz = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(clazz);
         Root<T> root = criteriaQuery.from(clazz);
 
         return buildSelectQuery(clazz, criteriaQuery, criteriaBuilder, root, Function.READ_BATCH,
-                                fillPredicates(filter, criteriaBuilder, root), fillOrderList(criteriaBuilder, root));
+                                fillPredicates(criteriaBuilder, root, filter), fillOrderList(criteriaBuilder, root), filter);
     }
 
     public void create(T model){

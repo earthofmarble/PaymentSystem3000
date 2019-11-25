@@ -5,6 +5,7 @@ import com.github.earthofmarble.model.dto.account.AccountExtendedDto;
 import com.github.earthofmarble.model.dto.account.AccountInfoDto;
 import com.github.earthofmarble.model.dto.account.moneytransfer.MoneyOperationDto;
 import com.github.earthofmarble.model.dto.payment.PaymentDto;
+import com.github.earthofmarble.model.filter.impl.account.AccountFilter;
 import com.github.earthofmarble.service.api.account.IAccountService;
 import com.github.earthofmarble.service.api.payment.IPaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,15 @@ public class AccountController extends AbstractController {
     }
 
     @GetMapping  //tested
-    public List<AccountInfoDto> getUserAccounts(@PathVariable(value = "ownerId") int ownerId) {
-        return castModelDtoList(accountService.getUserAccounts(ownerId, AccountInfoDto.class), AccountInfoDto.class);
+    public List<AccountInfoDto> getUserAccounts(@PathVariable(value = "ownerId") int ownerId, @RequestBody AccountFilter accountFilter) {
+        if (ownerId!=accountFilter.getUserId()){
+//            throw  new TODO!
+        }
+        //    todo    checkAuthority(ownerId)
+        return castModelDtoList(accountService.readWithFilter(accountFilter, AccountInfoDto.class), AccountInfoDto.class);
     }
 
-    @GetMapping(value = "/{accountId}") //not tested
+    @GetMapping(value = "/{accountId}") //tested
     public AccountExtendedDto getAccount(@PathVariable(value = "accountId") int accountId) {
         return (AccountExtendedDto) accountService.readById(accountId, AccountExtendedDto.class);
     }
@@ -51,32 +56,29 @@ public class AccountController extends AbstractController {
         return accountService.create(account);
     }
 
-    @PutMapping(value = "/{accountId}/transfer-money")  //not tested
+    @PutMapping(value = "/{accountId}/transfer-money")  //tested
     public PaymentDto transferMoney(@PathVariable(value = "accountId") int accountId,
                                     @RequestBody MoneyOperationDto transferDto){
         AccountInfoDto senderAccount = transferDto.getSenderAccount();
 //    todo    checkAuthority(senderAccount.getId())
         PaymentDto payment = accountService.orderMoney(senderAccount.getNumber(),
-                                         transferDto.getReceiverAccount().getNumber(),
-                                         transferDto.getSum());
-        paymentService.create(payment);
-        return payment;
+                                                       transferDto.getReceiverAccount().getNumber(),
+                                                       transferDto.getSum());
+        return paymentService.create(payment);
     }
 
     @PutMapping(value = "/fund-account")  //not tested
     public PaymentDto fundAccount(@RequestBody MoneyOperationDto fundDto){
         PaymentDto payment = accountService.fundAccount(fundDto.getReceiverAccount().getNumber(),
                                                         fundDto.getSum(), fundDto.getCurrency());
-        paymentService.create(payment);
-        return payment;
+        return paymentService.create(payment);
     }
 
     @PutMapping(value = "/withdraw-money")  //not tested
     public PaymentDto withdrawMoney(@RequestBody MoneyOperationDto withdrawDto){
         //todo сделать подтверждение платежа через письмо на почту
         PaymentDto payment = accountService.withdrawMoney(withdrawDto.getSenderAccount(), withdrawDto.getSum());
-        paymentService.create(payment);
-        return payment;
+        return paymentService.create(payment);
     }
 
     @PutMapping(value = "/{accountId}/change-lock") //not tested

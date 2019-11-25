@@ -1,7 +1,8 @@
 package com.github.earthofmarble.dal.impl.user;
 
-import com.github.earthofmarble.model.filter.AbstractFilter;
-import com.github.earthofmarble.model.filter.user.UserFilter;
+import com.github.earthofmarble.model.filter.IFilter;
+import com.github.earthofmarble.model.filter.impl.CommonFilter;
+import com.github.earthofmarble.model.filter.impl.user.UserFilter;
 import com.github.earthofmarble.model.model.user.User;
 import com.github.earthofmarble.dal.api.user.IUserDao;
 import com.github.earthofmarble.dal.impl.AbstractDao;
@@ -9,6 +10,7 @@ import com.github.earthofmarble.model.model.user.User_;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -23,7 +25,7 @@ import java.util.List;
 public class UserDao extends AbstractDao<User, Integer> implements IUserDao {
 
     @Override
-    protected List<Predicate> fillPredicates(AbstractFilter filter, CriteriaBuilder criteriaBuilder, Root userRoot){
+    protected List<Predicate> fillPredicates(CriteriaBuilder criteriaBuilder, From userRoot, IFilter filter){
         List<Predicate> predicates = new ArrayList<>();
 
         String firstName = "";

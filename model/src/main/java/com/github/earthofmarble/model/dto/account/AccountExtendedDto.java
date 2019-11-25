@@ -36,10 +36,10 @@ public class AccountExtendedDto implements IDto {
     private Double balance;
     private String number;
     private Boolean isLocked;
-    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = PaymentDto.class)
-    private List<PaymentDto> sentPayments;
-    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = PaymentDto.class)
-    private List<PaymentDto> receivedPayments;
+//    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = PaymentDto.class)
+//    private List<PaymentDto> sentPayments;
+//    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = PaymentDto.class)
+//    private List<PaymentDto> receivedPayments;
 
     public AccountExtendedDto() {
     }
@@ -100,26 +100,26 @@ public class AccountExtendedDto implements IDto {
         isLocked = locked;
     }
 
-    public List<PaymentDto> getSentPayments() {
-        if (sentPayments==null){
-            return new ArrayList<PaymentDto>();
-        }
-        return sentPayments;
-    }
-
-    public void setSentPayments(List<PaymentDto> sentPayments) {
-        this.sentPayments = sentPayments;
-    }
-
-    public List<PaymentDto> getReceivedPayments() {
-        if (receivedPayments==null){
-            return new ArrayList<PaymentDto>();
-        }
-        return receivedPayments;
-    }
-
-    public void setReceivedPayments(List<PaymentDto> receivedPayments) {
-        this.receivedPayments = receivedPayments;
-    }
+//    public List<PaymentDto> getSentPayments() {
+//        if (sentPayments==null){
+//            return new ArrayList<PaymentDto>();
+//        }
+//        return sentPayments;
+//    }
+//
+//    public void setSentPayments(List<PaymentDto> sentPayments) {
+//        this.sentPayments = sentPayments;
+//    }
+//
+//    public List<PaymentDto> getReceivedPayments() {
+//        if (receivedPayments==null){
+//            return new ArrayList<PaymentDto>();
+//        }
+//        return receivedPayments;
+//    }
+//
+//    public void setReceivedPayments(List<PaymentDto> receivedPayments) {
+//        this.receivedPayments = receivedPayments;
+//    }
 }
 
