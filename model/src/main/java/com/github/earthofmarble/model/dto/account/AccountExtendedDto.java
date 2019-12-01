@@ -1,25 +1,12 @@
 package com.github.earthofmarble.model.dto.account;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
-import com.github.earthofmarble.model.dto.payment.PaymentDto;
-import com.github.earthofmarble.model.dto.user.user.UserExtendedDto;
 import com.github.earthofmarble.model.dto.user.user.UserInfoDto;
 import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -35,6 +22,7 @@ public class AccountExtendedDto implements IDto {
     private CurrencyDto currency;
     private Double balance;
     private String number;
+    @JsonProperty(value="isLocked")
     private Boolean isLocked;
 //    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = PaymentDto.class)
 //    private List<PaymentDto> sentPayments;
@@ -100,7 +88,7 @@ public class AccountExtendedDto implements IDto {
         isLocked = locked;
     }
 
-//    public List<PaymentDto> getSentPayments() {
+    //    public List<PaymentDto> getSentPayments() {
 //        if (sentPayments==null){
 //            return new ArrayList<PaymentDto>();
 //        }

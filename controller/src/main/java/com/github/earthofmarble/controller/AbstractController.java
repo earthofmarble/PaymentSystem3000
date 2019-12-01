@@ -1,6 +1,10 @@
 package com.github.earthofmarble.controller;
 
 import com.github.earthofmarble.model.dto.IDto;
+import com.github.earthofmarble.model.filter.IFilter;
+import com.github.earthofmarble.model.filter.impl.CommonFilter;
+import com.github.earthofmarble.utility.exception.NullDtoObjectException;
+import com.github.earthofmarble.utility.exception.RedirectFailedException;
 //import com.senla.kedaleanid.controller.configuration.security.principal.UserPrincipal;
 //import com.senla.kedaleanid.dto.IModelDto;
 //import com.senla.kedaleanid.utility.exception.RedirectFailedException;
@@ -14,6 +18,9 @@ import com.github.earthofmarble.model.dto.IDto;
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpServletResponse;
 //import java.io.IOException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +37,30 @@ public abstract class AbstractController {
         }
         return dtos;
     }
+
+    protected IFilter fillFilterPagination(IFilter filter, Integer first, Integer size){
+        if (filter==null){
+            filter = new CommonFilter();
+        }
+        filter.setFirstElement(0);
+        filter.setPageSize(5);
+        if (first!=null){
+            filter.setFirstElement(first);
+        }
+        if (size!=null){
+            filter.setPageSize(size);
+        }
+        return filter;
+    }
+
+    protected void sendRedirect(HttpServletResponse response, String url) {
+        try {
+            response.sendRedirect(url);
+        } catch (IOException e) {
+            throw new RedirectFailedException("Redirect failed! \n" + e.getMessage());
+        }
+    }
+
 
 //    protected void authenticateUserAndSetSession(String username, String password, HttpServletRequest request, AuthenticationManager authenticationManager) {
 //        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
@@ -63,37 +94,5 @@ public abstract class AbstractController {
 //        }
 //    }
 //
-//    protected void sendRedirect(HttpServletResponse response, String url) {
-//        try {
-//            response.sendRedirect(url);
-//        } catch (IOException e) {
-//            throw new RedirectFailedException("Redirect failed! \n" + e.getMessage());
-//        }
-//    }
 
-    protected class Pagination {
-        Integer firstElement;
-        Integer pageSize;
-
-        public Pagination(Integer firstElement, Integer pageSize) {
-            this.firstElement = firstElement;
-            this.pageSize = pageSize;
-        }
-
-        public Integer getFirstElement() {
-            return firstElement;
-        }
-
-        public void setFirstElement(Integer firstElement) {
-            this.firstElement = firstElement;
-        }
-
-        public Integer getPageSize() {
-            return pageSize;
-        }
-
-        public void setPageSize(Integer pageSize) {
-            this.pageSize = pageSize;
-        }
-    }
 }

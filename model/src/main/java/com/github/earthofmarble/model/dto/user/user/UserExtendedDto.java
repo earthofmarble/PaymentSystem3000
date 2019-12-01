@@ -23,7 +23,7 @@ public class UserExtendedDto implements IDto {
     private String lastName;
     private UserRole role;
     private String email;
-    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = AccountExtendedDto.class)
+    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = AccountInfoDto.class)
     private List<AccountInfoDto> accounts;
 
     public UserExtendedDto() {

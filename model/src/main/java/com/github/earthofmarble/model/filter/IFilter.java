@@ -5,8 +5,8 @@ package com.github.earthofmarble.model.filter;
  */
 
 public interface IFilter {
-
     Integer getFirstElement();
     Integer getPageSize();
-
+    void setFirstElement(Integer firstElement);
+    void setPageSize(Integer pageSize);
 }

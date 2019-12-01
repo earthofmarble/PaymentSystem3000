@@ -1,6 +1,9 @@
 package com.github.earthofmarble.configuration;
 
-import com.github.earthofmarble.utility.mapper.service.Mapper;
+import com.github.earthofmarble.utility.defaultgraph.service.IDefaultGraphHandler;
+import com.github.earthofmarble.utility.defaultgraph.service.impl.DefaultGraphHandler;
+import com.github.earthofmarble.utility.mapper.service.IMapper;
+import com.github.earthofmarble.utility.mapper.service.impl.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,8 +15,9 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -24,7 +28,8 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
-@ComponentScan({ "com.github.earthofmarble.configuration", "com.github.earthofmarble.controller.**", "com.github.earthofmarble.dal.**", "com.github.earthofmarble.service.**" })
+@ComponentScan({ "com.github.earthofmarble.configuration", "com.github.earthofmarble.controller.**",
+                 "com.github.earthofmarble.dal.**", "com.github.earthofmarble.service.**" })
 @PropertySource(value = { "classpath:application.properties" })
 public class AppConfiguration implements WebMvcConfigurer {
  
@@ -71,7 +76,17 @@ public class AppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public Mapper mapper(){
+    public IMapper mapper(){
         return new Mapper();
+    }
+
+    @Bean
+    public IDefaultGraphHandler defaultGraphHandler(){
+        return new DefaultGraphHandler();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
     }
 }

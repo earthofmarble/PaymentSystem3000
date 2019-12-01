@@ -2,11 +2,13 @@ package com.github.earthofmarble.dal.impl;
 
 import com.github.earthofmarble.dal.api.IGenericDao;
 import com.github.earthofmarble.model.filter.IFilter;
-import com.github.earthofmarble.utility.defaultgraph.DefaultGraph;
-import com.github.earthofmarble.utility.defaultgraph.DefaultGraphs;
-import com.github.earthofmarble.utility.defaultgraph.Function;
+import com.github.earthofmarble.utility.defaultgraph.annotation.DefaultGraph;
+import com.github.earthofmarble.utility.defaultgraph.annotation.DefaultGraphs;
+import com.github.earthofmarble.utility.defaultgraph.enumeration.Function;
+import com.github.earthofmarble.utility.defaultgraph.service.IDefaultGraphHandler;
 import com.github.earthofmarble.utility.exception.DefaultGraphException;
 import com.github.earthofmarble.utility.exception.NoIdAnnotationException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -31,12 +33,10 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class AbstractDao<T, PK extends Serializable> implements IGenericDao<T, PK> {
 
+    @Autowired
+    protected IDefaultGraphHandler defaultGraphHandler;
     @PersistenceContext(type = PersistenceContextType.EXTENDED)
     protected EntityManager entityManager;
-
-    protected Class<T> getEntityType() {
-        return (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    }
 
     private String getIdFieldName(Class clazz){
         Field[] fields = clazz.getDeclaredFields();
@@ -45,36 +45,15 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
                 return field.getName();
             }
         }
-        throw new NoIdAnnotationException("There is no field with an @Id annotation specified in class ["+clazz.getSimpleName()+"]");
+        throw new NoIdAnnotationException("There is no field with an @Id enumeration specified in class ["+clazz.getSimpleName()+"]");
     }
 
-    private DefaultGraph getDesiredGraph(Class clazz, Function function) {
-        DefaultGraphs defaultGraphs = getDefGraphsAnnotation(clazz);
-
-        if (defaultGraphs!=null && !function.equals(Function.NONE)){
-
-            if (defaultGraphs.value().length==0){
-                throw new DefaultGraphException("The [@DefaultGraphs] annotation's value is empty! " +
-                                                "There should be at least one [@DefaultGraph] nested parameter");
-            }
-
-            for (DefaultGraph graph: defaultGraphs.value()){
-                if (graph.function().equals(function)){
-                    return graph;
-                }
-            }
-        }
-
-        DefaultGraph defaultGraph = getDefGraphAnnotation(clazz);
-        if (defaultGraph!=null){
-            return defaultGraph;
-        }
-
-        return null;
+    protected Class<T> getEntityType() {
+        return (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     protected EntityGraph createEntityGraph(Class clazz, Function function){
-        DefaultGraph defaultGraph = getDesiredGraph(clazz, function);
+        DefaultGraph defaultGraph = defaultGraphHandler.getDesiredGraph(clazz, function);
         if (defaultGraph!=null) {
             return entityManager.getEntityGraph(defaultGraph.name());
         }
@@ -82,19 +61,11 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
     }
 
     protected String getFetchType(Class clazz, Function function){
-        DefaultGraph defaultGraph = getDesiredGraph(clazz, function);
+        DefaultGraph defaultGraph = defaultGraphHandler.getDesiredGraph(clazz, function);
         if (defaultGraph!=null) {
             return defaultGraph.fetchType();
         }
         return null;
-    }
-
-    protected DefaultGraph getDefGraphAnnotation(Class clazz){
-        return (DefaultGraph) clazz.getAnnotation(DefaultGraph.class);
-    }
-
-    protected DefaultGraphs getDefGraphsAnnotation(Class clazz){
-        return (DefaultGraphs) clazz.getAnnotation(DefaultGraphs.class);
     }
 
     protected List<Order> fillOrderList(CriteriaBuilder criteriaBuilder, Root root) {
@@ -115,9 +86,10 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
      * @param predicates list of predicates
      * @param orderList list of orders
      * @param filter - filter, can be null. if null first result if set to 0 and page size is set to 5
+     * @param andPredicates - if [true], then [criteriaBuilder.and] will be used to fill where clause, otherwise [criteriaBuilder.or]
      */
     protected List<T> buildSelectQuery(Class clazz, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder, Root root,
-                                       Function function, List<Predicate> predicates, List<Order> orderList, IFilter filter){
+                                       Function function, List<Predicate> predicates, List<Order> orderList, IFilter filter, Boolean andPredicates){
         Integer firstResult = 0;
         Integer pageSize = 5;
         if (filter!=null){
@@ -125,8 +97,12 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
             pageSize = filter.getPageSize();
         }
         EntityGraph entityGraph = createEntityGraph(clazz, function);
+        if (andPredicates){
+            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+        } else {
+            criteriaQuery.where(criteriaBuilder.or(predicates.toArray(new Predicate[0])));
+        }
         criteriaQuery.select(root)
-                     .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
                      .orderBy(orderList);
         return entityManager.createQuery(criteriaQuery)
                             .setHint("javax.persistence."+getFetchType(clazz, function), entityGraph)
@@ -144,7 +120,7 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
         predicates.add(criteriaBuilder.equal(root.get(getIdFieldName(clazz)), primaryKey));
 
         return buildSelectQuery(clazz, criteriaQuery, criteriaBuilder, root, Function.READ_SINGLE,
-                                predicates, fillOrderList(criteriaBuilder, root), null);
+                                predicates, fillOrderList(criteriaBuilder, root), null, true);
     }
 
     /**
@@ -158,7 +134,8 @@ public abstract class AbstractDao<T, PK extends Serializable> implements IGeneri
         Root<T> root = criteriaQuery.from(clazz);
 
         return buildSelectQuery(clazz, criteriaQuery, criteriaBuilder, root, Function.READ_BATCH,
-                                fillPredicates(criteriaBuilder, root, filter), fillOrderList(criteriaBuilder, root), filter);
+                                fillPredicates(criteriaBuilder, root, filter),
+                                fillOrderList(criteriaBuilder, root), filter, true);
     }
 
     public void create(T model){

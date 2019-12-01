@@ -3,12 +3,14 @@ package com.github.earthofmarble.service.impl;
 import com.github.earthofmarble.dal.api.IGenericDao;
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.model.filter.IFilter;
+import com.github.earthofmarble.model.model.IModel;
 import com.github.earthofmarble.service.api.IGenericService;
 import com.github.earthofmarble.utility.exception.ClassConstructorException;
 import com.github.earthofmarble.utility.exception.InvalidRecordAmountReturnedException;
 import com.github.earthofmarble.utility.exception.NoDbRecordException;
 import com.github.earthofmarble.utility.mapper.exception.WrongReferencedTypeException;
-import com.github.earthofmarble.utility.mapper.service.Mapper;
+import com.github.earthofmarble.utility.mapper.service.IMapper;
+import com.github.earthofmarble.utility.mapper.service.impl.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,7 @@ import java.util.List;
 public abstract class AbstractService<T, PK extends Serializable> implements IGenericService<T, PK> {
 
     @Autowired
-    protected Mapper mapper;
+    protected IMapper mapper;
     private IGenericDao genericDao;
 
     protected AbstractService(IGenericDao genericDao) {
@@ -74,7 +76,7 @@ public abstract class AbstractService<T, PK extends Serializable> implements IGe
         return (IDto) mapper.convert(model, dtoClazz, null);
     }
 
-    protected void checkSingleListSize(List models){
+    protected T checkSingleListSize(List<T> models){
         if (models.isEmpty()) {
             throw new NoDbRecordException("There is no such [" + getEntityType().getSimpleName() +"]");
         }
@@ -82,6 +84,7 @@ public abstract class AbstractService<T, PK extends Serializable> implements IGe
             throw new InvalidRecordAmountReturnedException(models.size() + " [" + getEntityType().getSimpleName() +
                     "] records returned from database, while expected [1].");
         }
+        return models.get(0);
     }
 
     public List<IDto> readWithFilter(IFilter filter, Class convertToDtoClazz) {
@@ -91,8 +94,7 @@ public abstract class AbstractService<T, PK extends Serializable> implements IGe
 
     public IDto readById(PK primaryKey, Class dtoClazz) {
         List<T> models = genericDao.readByPk(primaryKey);
-        checkSingleListSize(models);
-        return convertToDto(models.get(0), dtoClazz);
+        return convertToDto(checkSingleListSize(models), dtoClazz);
     }
 
     public boolean create(IDto dto) {
@@ -102,15 +104,13 @@ public abstract class AbstractService<T, PK extends Serializable> implements IGe
 
     public boolean update(IDto dto) {
         List<T> models = genericDao.readByPk(dto.getId());
-        checkSingleListSize(models);
-        genericDao.merge(mapper.convert(dto, getEntityType(), models.get(0)));
+        genericDao.merge(mapper.convert(dto, getEntityType(), checkSingleListSize(models)));
         return true;
     }
 
     public boolean delete(IDto dto) {
         List<T> models = genericDao.readByPk(dto.getId());
-        checkSingleListSize(models);
-        genericDao.delete(models.get(0));
+        genericDao.delete(checkSingleListSize(models));
         return true;
     }
 }

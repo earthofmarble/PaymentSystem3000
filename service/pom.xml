@@ -16,6 +16,12 @@
             <groupId>com.github.earthofmarble</groupId>
             <artifactId>dal</artifactId>
         </dependency>
+        <dependency>
+            <!--не уверен, нужен ли секурити в сервисе, но нужен пассворд энкодер, так что ставим сюда, а контроллер наследует у сервиса-->
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.2.1.RELEASE</version>
+        </dependency>
     </dependencies>
 
 </project>

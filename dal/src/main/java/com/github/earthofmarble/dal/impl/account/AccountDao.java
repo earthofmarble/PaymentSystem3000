@@ -8,7 +8,7 @@ import com.github.earthofmarble.dal.impl.AbstractDao;
 import com.github.earthofmarble.model.model.account.Account_;
 import com.github.earthofmarble.model.model.user.User;
 import com.github.earthofmarble.model.model.user.User_;
-import com.github.earthofmarble.utility.defaultgraph.Function;
+import com.github.earthofmarble.utility.defaultgraph.enumeration.Function;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -21,7 +21,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +77,8 @@ public class AccountDao extends AbstractDao<Account, Integer> implements IAccoun
 
     /**
      * Although we read only one element, you can see Function.READ_BATCH.
-     * READ_BATCH is set because there's no need to load extra parameters like payments etc.
+     * READ_BATCH is set because this method is used in inner operations, so
+     * there's no need to load extra parameters like payments, etc.
      */
     public List<Account> readByAccountNumber(String accountNumber){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -87,8 +87,8 @@ public class AccountDao extends AbstractDao<Account, Integer> implements IAccoun
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(criteriaBuilder.equal(root.get(Account_.NUMBER), accountNumber));
 
-        return buildSelectQuery(Account.class, criteriaQuery, criteriaBuilder, root,
-                                Function.READ_BATCH, predicates, fillOrderList(criteriaBuilder, root), null);
+        return buildSelectQuery(Account.class, criteriaQuery, criteriaBuilder, root, Function.READ_BATCH,
+                                predicates, fillOrderList(criteriaBuilder, root), null, true);
     }
 
     @Override
@@ -104,8 +104,8 @@ public class AccountDao extends AbstractDao<Account, Integer> implements IAccoun
         List<Order> orderList = new ArrayList<>();
         orderList.add(criteriaBuilder.desc(root.get(Account_.BALANCE)));
 
-        return buildSelectQuery(Account.class, criteriaQuery, criteriaBuilder, root,
-                Function.READ_BATCH, predicates, orderList, accountFilter);
+        return buildSelectQuery(Account.class, criteriaQuery, criteriaBuilder, root, Function.READ_BATCH,
+                                predicates, orderList, accountFilter, true);
     }
 
     public void withdrawMoney(Integer accountId, Double amount){

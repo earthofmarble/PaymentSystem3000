@@ -3,8 +3,11 @@ package com.github.earthofmarble.service.api.account;
 import com.github.earthofmarble.model.dto.account.AccountInfoDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
 import com.github.earthofmarble.model.dto.payment.PaymentDto;
+import com.github.earthofmarble.model.filter.impl.account.AccountFilter;
 import com.github.earthofmarble.model.model.account.Account;
 import com.github.earthofmarble.service.api.IGenericService;
+
+import java.util.List;
 
 /**
  * Created by earthofmarble on Oct, 2019
@@ -18,7 +21,7 @@ public interface IAccountService extends IGenericService<Account, Integer> {
      *  @param sum unconverted sum
      *  @return returns payment object to create in controller
      */
-    PaymentDto withdrawMoney(AccountInfoDto accountDto, Double sum);
+    PaymentDto withdrawMoney(AccountInfoDto accountDto, Double sum, CurrencyDto receiverCurrencyDto);
 
     /**
      *  This method is used in actual replenish operations, so:

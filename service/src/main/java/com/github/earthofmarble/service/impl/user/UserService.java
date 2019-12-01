@@ -10,7 +10,6 @@ import com.github.earthofmarble.model.model.user.UserCreds;
 import com.github.earthofmarble.service.api.user.IUserCredsService;
 import com.github.earthofmarble.service.api.user.IUserService;
 import com.github.earthofmarble.service.impl.AbstractService;
-import com.github.earthofmarble.utility.exception.InvalidRecordAmountReturnedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,7 @@ public class UserService extends AbstractService<User, Integer> implements IUser
     public boolean create(IDto dto) {
         tryCastPossibilities(dto, UserProfileDto.class);
         UserProfileDto userDto = (UserProfileDto) dto;
-        if (!userCredsService.tryLogin(userDto.getUserCreds().getUsername())){
+        if (!userCredsService.tryUsername(userDto.getUserCreds().getUsername())){
             return false;
         }
         UserCreds userCreds = (UserCreds) mapper.convert(userDto.getUserCreds(), UserCreds.class, null);
@@ -58,17 +57,7 @@ public class UserService extends AbstractService<User, Integer> implements IUser
         tryCastPossibilities(dto, UserProfileDto.class);
         UserProfileDto userDto = (UserProfileDto) dto;
         List<User> users = userDao.readByPk(userDto.getId());
-        checkSingleListSize(users);
-        userDao.merge((User) mapper.convert(userDto, User.class, users.get(0)));
-        return true;
-    }
-
-    @Override
-    public boolean delete(IDto dto) {
-        tryCastPossibilities(dto, UserInfoDto.class);
-        List<UserCreds> credsList = userCredsDao.readByPk(dto.getId());
-        checkSingleListSize(credsList);
-        userCredsDao.delete(credsList.get(0));
+        userDao.merge((User) mapper.convert(userDto, User.class, checkSingleListSize(users)));
         return true;
     }
 }

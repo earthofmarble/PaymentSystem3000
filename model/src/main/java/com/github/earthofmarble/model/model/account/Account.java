@@ -4,14 +4,13 @@ import com.github.earthofmarble.model.model.IModel;
 import com.github.earthofmarble.model.model.currency.Currency;
 import com.github.earthofmarble.model.model.payment.Payment;
 import com.github.earthofmarble.model.model.user.User;
-import com.github.earthofmarble.utility.defaultgraph.DefaultGraph;
-import com.github.earthofmarble.utility.defaultgraph.DefaultGraphs;
-import com.github.earthofmarble.utility.defaultgraph.Function;
+import com.github.earthofmarble.utility.defaultgraph.annotation.DefaultGraph;
+import com.github.earthofmarble.utility.defaultgraph.annotation.DefaultGraphs;
+import com.github.earthofmarble.utility.defaultgraph.enumeration.Function;
 import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -131,7 +130,7 @@ public class Account implements IModel {
 
     public List<Payment> getSentPayments() {
         if (sentPayments==null){
-            return new ArrayList<Payment>();
+            return new ArrayList<>();
         }
         return sentPayments;
     }
@@ -142,7 +141,7 @@ public class Account implements IModel {
 
     public List<Payment> getReceivedPayments() {
         if (receivedPayments==null){
-            return new ArrayList<Payment>();
+            return new ArrayList<>();
         }
         return receivedPayments;
     }

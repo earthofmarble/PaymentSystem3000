@@ -2,14 +2,14 @@ package com.github.earthofmarble.model.model.user;
 
 import com.github.earthofmarble.model.model.IModel;
 import com.github.earthofmarble.model.model.account.Account;
-import com.github.earthofmarble.utility.defaultgraph.DefaultGraph;
-import com.github.earthofmarble.utility.defaultgraph.DefaultGraphs;
-import com.github.earthofmarble.utility.defaultgraph.Function;
+import com.github.earthofmarble.model.model.account.Account_;
+import com.github.earthofmarble.utility.defaultgraph.annotation.DefaultGraph;
+import com.github.earthofmarble.utility.defaultgraph.annotation.DefaultGraphs;
+import com.github.earthofmarble.utility.defaultgraph.enumeration.Function;
 import com.github.earthofmarble.utility.mapper.annotation.Convertible;
 import com.github.earthofmarble.utility.mapper.annotation.ReferencedField;
 import com.github.earthofmarble.utility.mapper.enumeration.PropertyType;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.ArrayList;
@@ -32,7 +33,11 @@ import java.util.Objects;
 @Entity(name = "user")
 @NamedEntityGraphs(value = {
         @NamedEntityGraph(name = "userInfoGraph"),
-        @NamedEntityGraph(name = "userExtendedGraph", attributeNodes = {@NamedAttributeNode(value = User_.ACCOUNTS)}),
+        //TODO может быть аккаунты не нужны для получения полной инфы о юзере, потому что, выгружаются сразу все аккаунты, насколько я понимаю, пагинацию на егерь лоад нельзя поставить. нужно подумать.
+        @NamedEntityGraph(name = "userExtendedGraph", attributeNodes = {@NamedAttributeNode(value = User_.ACCOUNTS,
+                                                                                            subgraph = "userAccountSubgraph")},
+                          subgraphs = @NamedSubgraph(name = "userAccountSubgraph",
+                                                     attributeNodes = @NamedAttributeNode(value = Account_.CURRENCY))),
         @NamedEntityGraph(name = "userProfileGraph", attributeNodes = {@NamedAttributeNode(value = User_.USER_CREDS)})
 })
 @DefaultGraphs(value = {
@@ -58,6 +63,7 @@ public class User implements IModel {
     @ReferencedField(type = PropertyType.COMPOSITE)
     private UserCreds userCreds;
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @ReferencedField(type = PropertyType.COLLECTION, thisContainsClass = Account.class)
     private List<Account> accounts;
 
     public User() {

@@ -4,7 +4,7 @@ import com.github.earthofmarble.model.model.user.UserCreds;
 import com.github.earthofmarble.dal.api.user.IUserCredsDao;
 import com.github.earthofmarble.dal.impl.AbstractDao;
 import com.github.earthofmarble.model.model.user.UserCreds_;
-import com.github.earthofmarble.utility.defaultgraph.Function;
+import com.github.earthofmarble.utility.defaultgraph.enumeration.Function;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,7 +29,7 @@ public class UserCredsDao extends AbstractDao<UserCreds, Integer> implements IUs
         predicates.add(criteriaBuilder.equal(root.get(UserCreds_.USERNAME), username));
 
         return buildSelectQuery(UserCreds.class, criteriaQuery, criteriaBuilder, root, Function.NONE,
-                predicates, fillOrderList(criteriaBuilder, root), null);
+                predicates, fillOrderList(criteriaBuilder, root), null, true);
     }
 
 }

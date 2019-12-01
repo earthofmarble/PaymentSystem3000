@@ -1,15 +1,6 @@
 package com.github.earthofmarble.controller;
 
 //import com.github.earthofmarble.configuration.AppConfiguration;
-import com.github.earthofmarble.model.dto.account.AccountExtendedDto;
-import com.github.earthofmarble.model.dto.account.AccountInfoDto;
-import com.github.earthofmarble.model.model.account.Account;
-import com.github.earthofmarble.model.model.currency.Currency;
-import com.github.earthofmarble.service.api.account.IAccountService;
-import com.github.earthofmarble.service.api.payment.IPaymentService;
-import com.github.earthofmarble.utility.mapper.service.Mapper;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 /**
  * Created by earthofmarble on Oct, 2019

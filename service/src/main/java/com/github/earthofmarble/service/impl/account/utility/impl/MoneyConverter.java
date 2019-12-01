@@ -27,7 +27,7 @@ public class MoneyConverter implements IMoneyConverter {
      * @return final converted value
      */
     public Double convertMoney(Currency senderCurrency, Currency receiverCurrency, Double amount) {
-        if (senderCurrency.getId().equals(receiverCurrency.getId())) {
+        if (receiverCurrency==null || senderCurrency.getId().equals(receiverCurrency.getId())) {
             return amount;
         }
         amount = conversion(senderCurrency, amount, true);

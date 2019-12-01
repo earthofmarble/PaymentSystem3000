@@ -1,5 +1,6 @@
 package com.github.earthofmarble.model.dto.account;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.earthofmarble.model.dto.IDto;
 import com.github.earthofmarble.model.dto.currency.CurrencyDto;
 import com.github.earthofmarble.model.dto.payment.PaymentDto;
@@ -26,6 +27,7 @@ public class AccountInfoDto implements IDto {
     private CurrencyDto currency;
     private Double balance;
     private String number;
+    @JsonProperty(value="isLocked")
     private Boolean isLocked;
 
     public AccountInfoDto() {
